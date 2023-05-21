@@ -36,6 +36,7 @@ UsersAPI provides the following endpoints:
 Endpoint: /api/Users/register
 
 Request Body:
+```
 {
   "firstName": "Ali",
   "lastName": "Suliman",
@@ -43,8 +44,10 @@ Request Body:
   "password": "somePassword",
   "confirmedPassword": "somePassword"
 }
+```
 
 Response:
+```
 {
   "data": {
     "firstName": "Ali",
@@ -56,17 +59,21 @@ Response:
   "success": true,
   "statusCode": 200
 }
+```
 
 ### User Sign in (POST /api/Users/signIn)
 Endpoint: /api/Users/signIn
 
 Request Body:
+```
 {
   "email": "ali.suliman@example.com",
   "password": "somePassword"
 }
+```
 
 Response:
+```
 {
   "data": {
     "firstName": "Ali",
@@ -78,6 +85,7 @@ Response:
   "success": true,
   "statusCode": 200
 }
+```
 
 ### Get User (GET /api/Users/user?email=<<email_here>>)
 Endpoint: /api/Users/user?email=<<email_here>>
@@ -86,6 +94,7 @@ Request Parameter:
 > ?email='ali.suliman@example.com'
 
 Response:
+```
 {
   "data": {
     "firstName": "Ali",
@@ -97,3 +106,4 @@ Response:
   "success": true,
   "statusCode": 200
 }
+```
