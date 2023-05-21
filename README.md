@@ -3,22 +3,35 @@
 
 ## Installation and Setup:
 
-1- clone this repo
+1- clone the repo
+```bash
+git clone https://github.com/Ali-y-Suliman/UsersAPI.git
+```
 
 2- install dotnet ef:
-> dotnet tool install --global dotnet-ef
+```bash
+dotnet tool install --global dotnet-ef
+```
 
 3- run dotnet build:
-> dotnet build
+```bash
+dotnet build
+```
 
 4- create the database:
-> dotnet ef database update
+```bash
+dotnet ef database update
+```
 
 5- run the project:
-> dotnet run
+```bash
+dotnet run
+```
 
 Note: to run swagger:
-> dotnet watch run
+```bash
+dotnet watch run
+```
 
 ---
 
