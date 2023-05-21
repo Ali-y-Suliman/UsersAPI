@@ -25,7 +25,7 @@ namespace Users.Dtos.User
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string email { get; set; } = "";
 
-         [Required(ErrorMessage = "Password is required")]
+        [Required(ErrorMessage = "Password is required")]
         public string password { get; set; } = "";
     }
 }

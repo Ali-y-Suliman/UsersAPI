@@ -16,7 +16,9 @@ namespace Users.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<ServiceResponse<SignInResponseDto>>> Register([FromBody] RegisterRequestDto user)
+        public async Task<ActionResult<ServiceResponse<SignInResponseDto>>> Register(
+            [FromBody] RegisterRequestDto user
+        )
         {
             var response = await _userService.register(user);
             if (!response.Success)
@@ -27,7 +29,9 @@ namespace Users.Controllers
         }
 
         [HttpPost("signIn")]
-        public async Task<ActionResult<ServiceResponse<SignInResponseDto>>> user_signIn([FromBody] SignInRquestDto user)
+        public async Task<ActionResult<ServiceResponse<SignInResponseDto>>> user_signIn(
+            [FromBody] SignInRquestDto user
+        )
         {
             var response = await _userService.signIn(user);
             if (!response.Success)
@@ -48,12 +52,5 @@ namespace Users.Controllers
             }
             return Ok(response);
         }
-
-        // [HttpPut("resetPassword")]
-        // public async Task <ActionResult <ServiceResponse<Boolean>>> resetPassword (ChangePasswordDto user)
-        // {            
-        //     return Ok(await _userService.changePassword(user));
-        // }
-
     }
 }

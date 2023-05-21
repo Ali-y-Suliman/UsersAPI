@@ -16,6 +16,7 @@ namespace Users.Test.Users
         private readonly Mock<IUserRepository> userRepositoryMock;
         private readonly Mock<IConfiguration> configurationMock;
         public UserFunctions _userFunctions = new UserFunctions();
+
         public UsersServices(ITestOutputHelper output)
         {
             mapperMock = new Mock<IMapper>();
@@ -27,16 +28,21 @@ namespace Users.Test.Users
         [Fact]
         public async void signInService_ReturnsUserNotFound()
         {
-
             // Arrange
-            SignInRquestDto user = new SignInRquestDto { email = "ali.s@gmail.com", password = "abcd" };
+            SignInRquestDto user = new SignInRquestDto
+            {
+                email = "ali.s@gmail.com",
+                password = "abcd"
+            };
             User? expectedUser = null;
 
-            mapperMock.Setup(mapper => mapper.Map<User, SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });
+            mapperMock
+                .Setup(mapper => mapper.Map<User, SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
-            configurationMock.Setup(config => config["AppSettings:Token"])
-                 .Returns("my top secret key");
+            configurationMock
+                .Setup(config => config["AppSettings:Token"])
+                .Returns("my top secret key");
 
             userRepositoryMock
                 .Setup(repo => repo.GetUserByEmailAsync(user.email))
@@ -48,7 +54,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.signIn(user);
@@ -63,9 +73,12 @@ namespace Users.Test.Users
         [Fact]
         public async void signInService_Wrong_password()
         {
-
             // Arrange
-            SignInRquestDto user = new SignInRquestDto { email = "ali.s@gmail.com", password = "abcd" };
+            SignInRquestDto user = new SignInRquestDto
+            {
+                email = "ali.s@gmail.com",
+                password = "abcd"
+            };
 
             UserFunctions _userFunctions = new UserFunctions();
 
@@ -74,13 +87,21 @@ namespace Users.Test.Users
             var _passwordHash = passwordHash;
             var _passwordSalt = passwordSalt;
 
-            User? expectedUser = new User { id = 1, firstName = "ali", lastName = "suliman", email = "ali.s@gmail.com", passwordHash = _passwordHash, passwordSalt = _passwordSalt };
+            User? expectedUser = new User
+            {
+                id = 1,
+                firstName = "ali",
+                lastName = "suliman",
+                email = "ali.s@gmail.com",
+                passwordHash = _passwordHash,
+                passwordSalt = _passwordSalt
+            };
 
-            mapperMock.Setup(mapper => mapper.Map<User, SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });
+            mapperMock
+                .Setup(mapper => mapper.Map<User, SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
-            configurationMock.Setup(config => config["SomeKey"])
-                 .Returns("SomeValue");
+            configurationMock.Setup(config => config["SomeKey"]).Returns("SomeValue");
 
             userRepositoryMock
                 .Setup(repo => repo.GetUserByEmailAsync(user.email))
@@ -92,7 +113,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.signIn(user);
@@ -107,26 +132,34 @@ namespace Users.Test.Users
         [Fact]
         public async void signInService_Success()
         {
-
             // Arrange
             SignInRquestDto user = new SignInRquestDto();
             user.email = "ali.s@gmail.com";
             user.password = "abcd";
 
-            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(user.password);
+            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(
+                user.password
+            );
 
-            User expectedUser = new User { id = 1, firstName = "ali", lastName = "suliman", email = "ali.s@gmail.com" };
+            User expectedUser = new User
+            {
+                id = 1,
+                firstName = "ali",
+                lastName = "suliman",
+                email = "ali.s@gmail.com"
+            };
 
             expectedUser.passwordHash = passwordHash;
             expectedUser.passwordSalt = passwordSalt;
 
-
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
             var configurationSectionMock = new Mock<IConfigurationSection>();
-            configurationMock.Setup(config => config.GetSection("AppSettings:Token"))
-                 .Returns(configurationSectionMock.Object);
+            configurationMock
+                .Setup(config => config.GetSection("AppSettings:Token"))
+                .Returns(configurationSectionMock.Object);
 
             configurationSectionMock.Setup(s => s.Value).Returns("my top secret key");
 
@@ -140,7 +173,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             string expectedToken = _userFunctions.CreateToken(expectedUser, mockedConfiguration);
 
@@ -157,7 +194,6 @@ namespace Users.Test.Users
         [Fact]
         public async void registerService_Wrong_ExistedUser()
         {
-
             // Arrange
             RegisterRequestDto user = new RegisterRequestDto();
             user.email = "ali.s@gmail.com";
@@ -166,20 +202,29 @@ namespace Users.Test.Users
             user.firstName = "ali";
             user.lastName = "suliman";
 
-            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(user.password);
+            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(
+                user.password
+            );
 
-            User expectedUser = new User { id = 1, firstName = "ali", lastName = "suliman", email = "ali.s@gmail.com" };
+            User expectedUser = new User
+            {
+                id = 1,
+                firstName = "ali",
+                lastName = "suliman",
+                email = "ali.s@gmail.com"
+            };
 
             expectedUser.passwordHash = passwordHash;
             expectedUser.passwordSalt = passwordSalt;
 
-
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
             var configurationSectionMock = new Mock<IConfigurationSection>();
-            configurationMock.Setup(config => config.GetSection("AppSettings:Token"))
-                 .Returns(configurationSectionMock.Object);
+            configurationMock
+                .Setup(config => config.GetSection("AppSettings:Token"))
+                .Returns(configurationSectionMock.Object);
 
             configurationSectionMock.Setup(s => s.Value).Returns("my top secret key");
 
@@ -193,7 +238,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.register(user);
@@ -204,10 +253,9 @@ namespace Users.Test.Users
             Assert.Equal("User already exists!", signInResult.Message);
         }
 
-         [Fact]
+        [Fact]
         public async void registerService_Wrong_Password_MissMatched()
         {
-
             // Arrange
             RegisterRequestDto user = new RegisterRequestDto();
             user.email = "ali.s@gmail.com";
@@ -216,20 +264,29 @@ namespace Users.Test.Users
             user.firstName = "ali";
             user.lastName = "suliman";
 
-            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(user.password);
+            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(
+                user.password
+            );
 
-            User expectedUser = new User { id = 1, firstName = "ali", lastName = "suliman", email = "ali.s@gmail.com" };
+            User expectedUser = new User
+            {
+                id = 1,
+                firstName = "ali",
+                lastName = "suliman",
+                email = "ali.s@gmail.com"
+            };
 
             expectedUser.passwordHash = passwordHash;
             expectedUser.passwordSalt = passwordSalt;
 
-
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
             var configurationSectionMock = new Mock<IConfigurationSection>();
-            configurationMock.Setup(config => config.GetSection("AppSettings:Token"))
-                 .Returns(configurationSectionMock.Object);
+            configurationMock
+                .Setup(config => config.GetSection("AppSettings:Token"))
+                .Returns(configurationSectionMock.Object);
 
             configurationSectionMock.Setup(s => s.Value).Returns("my top secret key");
 
@@ -243,7 +300,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.register(user);
@@ -257,7 +318,6 @@ namespace Users.Test.Users
         [Fact]
         public async void registerService_Success()
         {
-
             // Arrange
             RegisterRequestDto user = new RegisterRequestDto();
             user.email = "ali.suliman.95@gmail.com";
@@ -266,26 +326,37 @@ namespace Users.Test.Users
             user.firstName = "ali";
             user.lastName = "suliman";
 
-            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(user.password);
+            (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(
+                user.password
+            );
 
-            User expectedUser = new User { id = 1, firstName = "ali", lastName = "suliman", email = "ali.s@gmail.com" };
+            User expectedUser = new User
+            {
+                id = 1,
+                firstName = "ali",
+                lastName = "suliman",
+                email = "ali.s@gmail.com"
+            };
 
             expectedUser.passwordHash = passwordHash;
             expectedUser.passwordSalt = passwordSalt;
 
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<RegisterRequestDto>()))
+                .Returns(new SignInResponseDto { });
 
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<RegisterRequestDto>()))
-                  .Returns(new SignInResponseDto { });
-
-            mapperMock.Setup(mapper => mapper.Map<User>(It.IsAny<RegisterRequestDto>()))
-                  .Returns(new User { });            
+            mapperMock
+                .Setup(mapper => mapper.Map<User>(It.IsAny<RegisterRequestDto>()))
+                .Returns(new User { });
 
             var configurationSectionMock = new Mock<IConfigurationSection>();
-            configurationMock.Setup(config => config.GetSection("AppSettings:Token"))
-                 .Returns(configurationSectionMock.Object);
+            configurationMock
+                .Setup(config => config.GetSection("AppSettings:Token"))
+                .Returns(configurationSectionMock.Object);
 
             configurationSectionMock.Setup(s => s.Value).Returns("my top secret key");
 
@@ -299,7 +370,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.register(user);
@@ -310,10 +385,9 @@ namespace Users.Test.Users
             Assert.Equal("Registered Successfully, please logIn", signInResult.Message);
         }
 
-         [Fact]
+        [Fact]
         public async void getUser_Success()
         {
-
             // Arrange
             SignInResponseDto user = new SignInResponseDto();
             user.email = "ali.suliman.95@gmail.com";
@@ -322,18 +396,25 @@ namespace Users.Test.Users
 
             (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash("abcd");
 
-            User expectedUser = new User { id = 1, firstName = "ali", lastName = "suliman", email = "ali.s@gmail.com" };
+            User expectedUser = new User
+            {
+                id = 1,
+                firstName = "ali",
+                lastName = "suliman",
+                email = "ali.s@gmail.com"
+            };
 
             expectedUser.passwordHash = passwordHash;
             expectedUser.passwordSalt = passwordSalt;
 
-
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });         
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
             var configurationSectionMock = new Mock<IConfigurationSection>();
-            configurationMock.Setup(config => config.GetSection("AppSettings:Token"))
-                 .Returns(configurationSectionMock.Object);
+            configurationMock
+                .Setup(config => config.GetSection("AppSettings:Token"))
+                .Returns(configurationSectionMock.Object);
 
             configurationSectionMock.Setup(s => s.Value).Returns("my top secret key");
 
@@ -347,7 +428,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.getUser(user.email);
@@ -358,10 +443,9 @@ namespace Users.Test.Users
             Assert.Equal("User Fetched Successfully", signInResult.Message);
         }
 
-         [Fact]
+        [Fact]
         public async void getUser_Failde_User_Not_Found()
         {
-
             // Arrange
             SignInResponseDto user = new SignInResponseDto();
             user.email = "ali.suliman.95@gmail.com";
@@ -372,13 +456,14 @@ namespace Users.Test.Users
 
             User? expectedUser = null;
 
-
-            mapperMock.Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
-                  .Returns(new SignInResponseDto { });         
+            mapperMock
+                .Setup(mapper => mapper.Map<SignInResponseDto>(It.IsAny<User>()))
+                .Returns(new SignInResponseDto { });
 
             var configurationSectionMock = new Mock<IConfigurationSection>();
-            configurationMock.Setup(config => config.GetSection("AppSettings:Token"))
-                 .Returns(configurationSectionMock.Object);
+            configurationMock
+                .Setup(config => config.GetSection("AppSettings:Token"))
+                .Returns(configurationSectionMock.Object);
 
             configurationSectionMock.Setup(s => s.Value).Returns("my top secret key");
 
@@ -392,7 +477,11 @@ namespace Users.Test.Users
 
             var mockedUserRepository = userRepositoryMock.Object;
 
-            var userService = new UserService(mockedMapper, mockedUserRepository, mockedConfiguration);
+            var userService = new UserService(
+                mockedMapper,
+                mockedUserRepository,
+                mockedConfiguration
+            );
 
             // Act
             var signInResult = await userService.getUser(user.email);
@@ -403,5 +492,4 @@ namespace Users.Test.Users
             Assert.Equal("User not found.", signInResult.Message);
         }
     }
-
 }

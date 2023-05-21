@@ -24,7 +24,5 @@ namespace Users.Repositories.UserRepository
         {
             return await _context.Users.AnyAsync(u => u.email.ToLower() == email.ToLower());
         }
-
-        // You can also include other user-related database operations here
     }
 }

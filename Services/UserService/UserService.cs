@@ -20,11 +20,6 @@ namespace Users.Services.UserService
             _userRepo = userRepo;
             _configuration = configuration;
         }
-        // public async Task<ServiceResponse<bool>> changePassword(ChangePasswordDto user)
-        // {
-        //     var serviceResponse = new ServiceResponse<bool>();
-        //     return serviceResponse;
-        // }
 
         public async Task<ServiceResponse<SignInResponseDto>> signIn(SignInRquestDto user)
         {
@@ -35,14 +30,29 @@ namespace Users.Services.UserService
                 var _user = await _userRepo.GetUserByEmailAsync(user.email);
                 string token = "";
                 if (_user is null)
-                
                 {
-                    var errorRes = new ServiceResponse<SignInResponseDto>(false, 404, null, "User not found.");
+                    var errorRes = new ServiceResponse<SignInResponseDto>(
+                        false,
+                        404,
+                        null,
+                        "User not found."
+                    );
                     return errorRes;
                 }
-                else if (!_userFunctions.VerifyPasswordHash(user.password, _user.passwordHash, _user.passwordSalt))
+                else if (
+                    !_userFunctions.VerifyPasswordHash(
+                        user.password,
+                        _user.passwordHash,
+                        _user.passwordSalt
+                    )
+                )
                 {
-                    var errorRes = new ServiceResponse<SignInResponseDto>(false, 401, null, "Wrong password.");
+                    var errorRes = new ServiceResponse<SignInResponseDto>(
+                        false,
+                        401,
+                        null,
+                        "Wrong password."
+                    );
                     return errorRes;
                 }
                 else
@@ -52,7 +62,12 @@ namespace Users.Services.UserService
 
                 response = _mapper.Map<SignInResponseDto>(_user);
                 response.token = token;
-                var successResponse = new ServiceResponse<SignInResponseDto>(true, 200, response, "SignedIn Successfully");
+                var successResponse = new ServiceResponse<SignInResponseDto>(
+                    true,
+                    200,
+                    response,
+                    "SignedIn Successfully"
+                );
                 return successResponse;
             }
             catch (Exception ex)
@@ -67,25 +82,41 @@ namespace Users.Services.UserService
             var response = _mapper.Map<SignInResponseDto>(user);
             var _user = _mapper.Map<User>(user);
 
-            //check if the email exist
             if (await _userFunctions.UserExists(_userRepo, user.email))
             {
-                var errorRes = new ServiceResponse<SignInResponseDto>(false, 400, null, "User already exists!");
+                var errorRes = new ServiceResponse<SignInResponseDto>(
+                    false,
+                    400,
+                    null,
+                    "User already exists!"
+                );
                 return errorRes;
             }
             else if (user.password != user.confirmedPassword)
             {
-               var errorRes = new ServiceResponse<SignInResponseDto>(false, 400, null, "Password and confirmedPassword didn't matched");
-                return errorRes; 
+                var errorRes = new ServiceResponse<SignInResponseDto>(
+                    false,
+                    400,
+                    null,
+                    "Password and confirmedPassword didn't matched"
+                );
+                return errorRes;
             }
             try
             {
-                (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(user.password);
+                (byte[] passwordHash, byte[] passwordSalt) = _userFunctions.CreatePasswordHash(
+                    user.password
+                );
 
                 _user.passwordHash = passwordHash;
                 _user.passwordSalt = passwordSalt;
                 await _userRepo.AddUserAsync(_user);
-                var successResponse = new ServiceResponse<SignInResponseDto>(true, 200, response, "Registered Successfully, please logIn");
+                var successResponse = new ServiceResponse<SignInResponseDto>(
+                    true,
+                    200,
+                    response,
+                    "Registered Successfully, please logIn"
+                );
                 return successResponse;
             }
             catch (Exception ex)
@@ -102,11 +133,21 @@ namespace Users.Services.UserService
                 var _user = await _userRepo.GetUserByEmailAsync(email);
                 if (_user is null)
                 {
-                    var errorRes = new ServiceResponse<SignInResponseDto>(false, 401, null, "User not found.");
+                    var errorRes = new ServiceResponse<SignInResponseDto>(
+                        false,
+                        401,
+                        null,
+                        "User not found."
+                    );
                     return errorRes;
                 }
                 var response = _mapper.Map<SignInResponseDto>(_user);
-                var successResponse = new ServiceResponse<SignInResponseDto>(true, 200, response, "User Fetched Successfully");
+                var successResponse = new ServiceResponse<SignInResponseDto>(
+                    true,
+                    200,
+                    response,
+                    "User Fetched Successfully"
+                );
                 return successResponse;
             }
             catch (Exception ex)
@@ -114,8 +155,6 @@ namespace Users.Services.UserService
                 var errorRes = new ServiceResponse<SignInResponseDto>(false, 400, null, ex.Message);
                 return errorRes;
             }
-
-
         }
     }
 
@@ -130,7 +169,7 @@ namespace Users.Services.UserService
             return false;
         }
 
-        public (byte [], byte []) CreatePasswordHash(string password)
+        public (byte[], byte[]) CreatePasswordHash(string password)
         {
             byte[] passwordHash;
             byte[] passwordSalt;
@@ -164,10 +203,14 @@ namespace Users.Services.UserService
             if (appSettingsToken is null)
                 throw new Exception("AppSettings Token is null!");
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-                .GetBytes(appSettingsToken));
+            SymmetricSecurityKey key = new SymmetricSecurityKey(
+                System.Text.Encoding.UTF8.GetBytes(appSettingsToken)
+            );
 
-            SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            SigningCredentials creds = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha512Signature
+            );
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
