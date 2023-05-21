@@ -28,9 +28,14 @@ dotnet ef database update
 dotnet run
 ```
 
-Note: to run swagger:
+**Note**: to run swagger:
 ```bash
 dotnet watch run
+```
+
+**Note**: to run the unit tests:
+```bash
+dotnet test
 ```
 
 ---
