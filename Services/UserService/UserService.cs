@@ -23,7 +23,6 @@ namespace Users.Services.UserService
 
         public async Task<ServiceResponse<SignInResponseDto>> signIn(SignInRquestDto user)
         {
-            string m = "1";
             SignInResponseDto response = new SignInResponseDto();
             try
             {
